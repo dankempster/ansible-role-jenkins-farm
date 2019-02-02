@@ -1,0 +1,9 @@
+{% for node_name in groups['jenkins'] -%}
+	{%- if hostvars[node_name]['jenkins_farm_role'] == 'slave' %}
+Host {{ node_name }}
+	HostName {{ hostvars[node_name]["jenkins_node_ip"]
+	| default( hostvars[node_name]["ansible_default_ipv4"]["address"] )
+	}}
+	IdentityFile {{ jenkins_home }}/.ssh/id_rsa
+	{% endif %}
+{% endfor %}

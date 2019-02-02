@@ -1,0 +1,85 @@
+---
+jenkins_config_plugins: []
+jenkins_config_shell: /bin/bash
+
+jenkins_secret_key: ~
+
+jenkins_cli_enabled: true
+
+jenkins_git_installations: []
+jenkins_git_config_name: John Smith
+jenkins_git_config_email: john@example.com
+
+jenkins_github_enabled: false
+jenkins_github_token: ""
+jenkins_github_token_name: "Github token"
+jenkins_github_token_id: "com.github.token"
+jenkins_github_username: ""
+jenkins_github_login_name: "Github prime login"
+jenkins_github_login_id: "com.github.prime-login"
+jenkins_github_servers:
+  - name: Github
+    api_url: https://api.github.com
+    credentials_id: "{{ jenkins_github_token_id }}"
+    client_cache_size: 20
+
+jenkins_env_python_enabled: false
+jenkins_env_molecule_enabled: false
+
+jenkins_nodejs_installations: []
+
+jenkins_ant_installations: []
+
+jenkins_dsl_enabled: false
+jenkins_dsl_security: true
+
+jenkins_user: jenkins
+jenkins_owner: jenkins
+jenkins_group: jenkins
+# password for SSH user. Defaults to jenkins_admin_password when blank.
+jenkins_user_password: ""
+
+jenkins_connection_delay: 5
+jenkins_connection_retries: 60
+jenkins_home: /var/lib/jenkins
+jenkins_hostname: localhost
+jenkins_http_port: 8080
+jenkins_url_prefix: ""
+jenkins_uri: "http://{{
+    jenkins_hostname ~ ':' ~ jenkins_http_port
+    ~ (jenkins_url_prefix | ternary(
+      '/' ~ jenkins_url_prefix,
+      ''
+    ))
+  }}"
+
+jenkins_plugins_state: present
+jenkins_plugin_updates_expiration: 86400
+jenkins_plugin_timeout: 60
+jenkins_plugins_install_dependencies: true
+
+jenkins_admin_username: admin
+jenkins_admin_password: admin
+jenkins_admin_email: admin@example.com
+jenkins_admin_password_file: ""
+jenkins_ssh_passphrase: "eyes-only"
+
+jenkins_process_user: jenkins
+jenkins_process_group: "{{ jenkins_process_user }}"
+
+jenkins_config_executors: 2
+
+jenkins_security_enabled: true
+jenkins_security_deny_read_access: false
+jenkins_security_disable_signup: true
+jenkins_security_captcha: false
+jenkins_security_disable_remember_me: false
+
+jenkins_install_distro_packages: []
+jenkins_install_pip_packages: []
+
+# name of master node for this farm
+jenkins_farm_master: jenkins_master
+jenkins_farm_role: "{{
+  (inventory_hostname == jenkins_farm_master) | ternary('master', 'slave')
+  }}"

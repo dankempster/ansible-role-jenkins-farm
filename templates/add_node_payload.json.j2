@@ -1,0 +1,44 @@
+{  
+  "name":"{{ node.name }}",
+  "nodeDescription":"{{ node.description }}",
+  "numExecutors":"{{ node.executors }}",
+  "remoteFS":"{{ node.remote_fs  }}",
+  "labelString":"{{ node.labels | join(' ') }}",
+  "mode":"{{ node.mode }}",
+  "":[  
+    "hudson.slaves.JNLPLauncher",
+    "hudson.slaves.RetentionStrategy$Always"
+  ],
+  "launcher":{  
+    "stapler-class":"hudson.slaves.JNLPLauncher",
+    "$class":"hudson.slaves.JNLPLauncher",
+    "workDirSettings":{  
+      "disabled":false,
+      "workDirPath":"{{ node.workdir }}",
+      "internalDir":"{{ node.internal_dir }}",
+      "failIfWorkDirIsMissing":{{ node.fail_on_no_workdir | ternary('true', 'false') }}
+    },
+    "tunnel":"{{ node.tunnel_through }}",
+    "vmargs":"{{ node.jvm_args }}"
+  },
+  "retentionStrategy":{  
+    "stapler-class":"hudson.slaves.RetentionStrategy$Always",
+    "$class":"hudson.slaves.RetentionStrategy$Always"
+  },
+  "nodeProperties":{  
+    "stapler-class-bag":"true"
+    {% if node.env_vars | count > 0 %},
+    "hudson-slaves-EnvironmentVariablesNodeProperty":{
+      "env":[  
+      {% set env_count = node.env_vars | count %}
+      {% set loop = 0 %}
+      {% for variable in node.env_vars %}
+        {% set loop = loop + 1 %}
+        { "key":"ENV_VAR",
+          "value":"VALUE" }{% if loop < count %},{% endif %}
+      {% endfor %}
+    }
+    {% endif %}
+  },
+  "type":"hudson.slaves.DumbSlave",
+}

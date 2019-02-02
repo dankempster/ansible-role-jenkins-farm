@@ -1,0 +1,7 @@
+---
+- src: geerlingguy.git
+  version: 2.0.4
+
+- src: https://github.com/dankempster/ansible-role-jenkins-config
+  version: feature/remove-farm
+  name: dankempter.jenkins-config

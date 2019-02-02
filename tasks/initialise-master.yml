@@ -1,0 +1,151 @@
+---
+
+#
+#
+### SSH KEY
+#
+- name: Ensure master's .ssh folders
+  file:
+    state: directory
+    path: "{{ item }}/.ssh"
+    mode: 0700
+    owner: "{{ jenkins_user }}"
+    group: "{{ jenkins_group | default(jenkins_user, true) }}"
+  become: true
+  with_items:
+    - "{{ jenkins_home }}"
+
+- name: Ensure master's key pair
+  command: 'ssh-keygen
+    -b 2048
+    -t rsa
+    -q
+    -f {{ jenkins_home }}/.ssh/id_rsa
+    -N "{{ jenkins_ssh_passphrase }}"'
+  args:
+    creates: "{{ jenkins_home }}/.ssh/id_rsa"
+  become: true
+
+- name: Test master's public key
+  command: ssh-keygen -l -f {{ jenkins_home }}/.ssh/id_rsa.pub
+  changed_when: false
+  become: true
+
+- name: Retrieve master's public key
+  command: cat {{ jenkins_home }}/.ssh/id_rsa.pub
+  register: jenkins_public_key
+  changed_when: false
+  become: true
+
+- name: Set master's public key fact
+  set_fact:
+    jenkins_master_public_key: "{{ jenkins_public_key.stdout }}"
+
+- name: Ensure SSH files ownership
+  file:
+    path: "{{ item.path }}"
+    mode: "{{ item.mode }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+  with_items:
+    - path: "{{ jenkins_home }}/.ssh/"
+      mode: "0700"
+      owner: "{{ jenkins_user }}"
+      group: "{{ jenkins_group }}"
+    - path: "{{ jenkins_home }}/.ssh/id_rsa"
+      mode: "0600"
+      owner: "{{ jenkins_user }}"
+      group: "{{ jenkins_group }}"
+    - path: "{{ jenkins_home }}/.ssh/id_rsa.pub"
+      mode: "0644"
+      owner: "{{ jenkins_user }}"
+      group: "{{ jenkins_group }}"
+  become: true
+
+- name: Configure CLI SSH to use Jenkins' key for each node.
+  template:
+    src: templates/jenkins_ssh_config.j2
+    dest: "{{ item.path }}/.ssh/ssh_config"
+    mode: 0640
+    owner: "{{ item.owner }}"
+    group: "{{ item.owner }}"
+  become: true
+  with_items:
+    - path: "{{ jenkins_home }}"
+      owner: "{{ jenkins_user }}"
+
+
+#
+#
+### KNOWN HOSTS
+#
+- name: Ensure master Jenkins home known_hosts file
+  file:
+    state: touch
+    path: "{{ jenkins_home }}/.ssh/known_hosts"
+    owner: "{{ jenkins_user }}"
+    group: "{{ jenkins_group }}"
+    mode: 0640
+  become: true
+
+- name: Add each slave as a known_host to master
+  include_tasks: known-host.yml
+  with_items: "{{ groups['jenkins'] }}"
+  loop_control:
+    loop_var: node_name
+  when: hostvars[node_name]['jenkins_farm_role'] == 'slave'
+
+#
+#
+### JENKINS SSH CREDENTIAL
+#
+- name: Retrieve Jenkins' private key
+  command: cat {{ jenkins_home }}/.ssh/id_rsa
+  register: jenkins_private_key
+  changed_when: false
+  become: true
+
+- name: Get Jenkins crumb
+  uri:
+    url: '{{ jenkins_uri }}/crumbIssuer/api/json'
+    user: "{{ jenkins_admin_username }}"
+    password: "{{ jenkins_admin_password }}"
+    force_basic_auth: true
+    return_content: true
+  register: jenkins_crumb
+  when: |
+    (jenkins_github_enabled and jenkins_github_token != "")
+    or jenkins_credentials_ssh_private_keys | count > 0
+    or jenkins_credentials_secret_text | count > 0
+
+- name: Add Jenkins SSH Key to credentials store
+  vars:
+    create_ssh_private_key:
+      scope: GLOBAL
+      id: jenkins.ssh
+      description: Jenkins SSH Key
+      username: "jenkins"
+      passphrase: "{{ jenkins_ssh_passphrase | default('') }}"
+      privateKeySource:
+        stapler-class: "com.cloudbees.jenkins.plugins.sshcredentials.impl\
+          .BasicSSHUserPrivateKey$DirectEntryPrivateKeySource"
+        privateKey: "{{ jenkins_private_key.stdout | replace('+', '%2B') }}"
+      stapler-class: "com.cloudbees.jenkins.plugins.sshcredentials.impl\
+        .BasicSSHUserPrivateKey"
+  uri:
+    method: POST
+    url: '{{ jenkins_uri }}/credentials/store/system/domain/_/createCredentials'
+    user: "{{ jenkins_admin_username }}"
+    password: "{{ jenkins_admin_password }}"
+    force_basic_auth: true
+    headers:
+      Jenkins-Crumb: "{{ jenkins_crumb.json.crumb }}"
+    body: |
+      json={
+        "": "0",
+        "credentials": {{ create_ssh_private_key | to_json }}
+      }
+    # Returns 302 when credential already exists
+    status_code: 302,404
+  register: result
+  no_log: true

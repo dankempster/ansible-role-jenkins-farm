@@ -1,0 +1,3 @@
+---
+MOLECULE_DISTRO: rasp_stretch
+MOLECULE_IMAGE: "dankempster/jenkins-raspbian-stretch-ansible:0.1"

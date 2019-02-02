@@ -1,0 +1,101 @@
+---
+
+- name: Create directory to generate REST payloads in
+  file:
+    state: directory
+    path: "{{ playbook_dir }}/rest-payloads"
+  delegate_to: localhost
+
+- name: Prepare 'Register {{ node_name }} node' payload
+  template:
+    src: "{{ playbook_dir }}/templates/add_node_payload.json.j2"
+    dest: "{{ playbook_dir }}/rest-payloads/add-node_{{ node_name }}.json"
+  vars:
+    node:
+      name: "{{ node_name }}"
+      hostname: '{{
+        hostvars[node_name]["jenkins_node_ip"]
+        | default(
+          hostvars[node_name]["ansible_default_ipv4"]["address"]
+        )
+        }}'
+      description: '{{
+        hostvars[node_name]["jenkins_node_description"]
+        | default("")
+        }}'
+      executors: '{{
+        hostvars[node_name]["jenkins_node_executors"]
+        | default(1)
+        }}'
+      remote_fs: '{{
+        hostvars[node_name]["jenkins_node_remote_fs"]
+        | default("/home/" ~ jenkins_user)
+        }}'
+      labels: '{{
+        hostvars[node_name]["jenkins_node_labels"]
+        | default( [] )
+        }}'
+      mode: '{{
+        hostvars[node_name]["jenkins_node_mode"]
+        | default("NORMAL")
+        }}'
+
+      # launcher
+      workdir: '{{
+        hostvars[node_name]["jenkins_node_workdir"]
+        | default("")
+        }}'
+      internal_dir: '{{
+        hostvars[node_name]["jenkins_node_internal_dir"]
+        | default("remoting")
+        }}'
+      fail_on_no_workdir: '{{
+        hostvars[node_name]["jenkins_node_fail_on_no_workdir"]
+        | default(false)
+        }}'
+      tunnel_through: '{{
+        hostvars[node_name]["jenkins_node_tunnel_through"]
+        | default("")
+        }}'
+      jvm_args: '{{
+        hostvars[node_name]["jenkins_node_jvm_args"]
+        | default("")
+        }}'
+
+      # ENV vars
+      env_vars: '{{
+        hostvars[node_name]["jenkins_node_env_vars"]
+        | default([])
+        }}'
+  delegate_to: localhost
+
+- name: Retrieve 'Register {{ node_name }} node' payload
+  command: "cat {{ playbook_dir }}/rest-payloads/add-node_{{ node_name }}.json"
+  register: payload
+  changed_when: false
+  delegate_to: localhost
+
+- name: Get Jenkins crumb
+  uri:
+    url: '{{ jenkins_uri }}/crumbIssuer/api/json'
+    user: "{{ jenkins_admin_username }}"
+    password: "{{ jenkins_admin_password }}"
+    force_basic_auth: true
+    return_content: true
+  register: jenkins_crumb
+
+- name: Register {{ node_name }} node
+  uri:
+    method: POST
+    url: "{{ jenkins_uri }}/computer/doCreateItem?\
+      name={{ node_name }}\
+      &type=hudson.slaves.DumbSlave"
+    user: "{{ jenkins_admin_username }}"
+    password: "{{ jenkins_admin_password }}"
+    force_basic_auth: true
+    headers:
+      Jenkins-Crumb: "{{ jenkins_crumb.json.crumb }}"
+    body: |
+      json={{ (payload.stdout | trim) }}
+    # Returns 302 on success, 400 when node exists
+    status_code: 302,400

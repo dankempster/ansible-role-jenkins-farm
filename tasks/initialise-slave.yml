@@ -1,0 +1,32 @@
+---
+
+- name: Ensure Jenkins user on slaves
+  user:
+    name: "{{ jenkins_user }}"
+    password: "{{
+      jenkins_user_password
+      | default(jenkins_admin_password, true)
+      }}"
+    home: "/home/{{ jenkins_user }}"
+    shell: /bin/bash
+  become: true
+
+- name: Add master's public key to slaves
+  authorized_key:
+    user: "{{ jenkins_user }}"
+    key: "{{ hostvars[jenkins_farm_master]['jenkins_master_public_key'] }}"
+    comment: "Jenkins master"
+  become: true
+
+- name: Ensure slave .ssh permissions and mode
+  file:
+    path: "/home/{{ jenkins_user }}/{{ item.name }}"
+    mode: "{{ item.mode }}"
+    owner: "{{ jenkins_user }}"
+    group: "{{ jenkins_group }}"
+  with_items:
+    - name: .ssh/
+      mode: "0700"
+    - name: .ssh/authorized_keys
+      mode: "0644"
+  become: true

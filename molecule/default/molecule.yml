@@ -1,0 +1,43 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+lint:
+  name: yamllint
+  options:
+    config-file: yaml-lint.yml
+platforms:
+  - name: "${MOLECULE_DISTRO:-debian9}"
+    image: "${MOLECULE_IMAGE:-dankempster/jenkins-ansible:latest}"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  lint:
+    name: ansible-lint
+scenario:
+  name: default
+  test_sequence:
+    - lint
+    - destroy
+    - dependency
+    - syntax
+    - create
+    - prepare
+    - converge
+    # - idempotence
+    # - side_effect
+    - verify
+    - destroy
+verifier:
+  name: testinfra
+  options:
+    junit-xml: ../../build/reports/testinfra-default.junit.xml
+  env:
+    TARGET_HOST: ${MOLECULE_DISTRO:-debian9}
+  lint:
+    name: flake8

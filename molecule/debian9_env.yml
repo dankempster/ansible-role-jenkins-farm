@@ -1,0 +1,3 @@
+---
+MOLECULE_DISTRO: debian9
+MOLECULE_IMAGE: "dankempster/jenkins-ansible:develop"

@@ -1,0 +1,25 @@
+---
+- name: Get {{ node_name }}'s public SSH key
+  command: 'ssh-keyscan -t rsa {{
+    hostvars[node_name]["jenkins_node_ip"]
+    | default(
+      hostvars[node_name]["ansible_default_ipv4"]["address"]
+    )
+    }}'
+  register: public_key
+  changed_when: false
+
+- name: Set {{ node_name }} as a known host
+  known_hosts:
+    path: "{{ item }}/.ssh/known_hosts"
+    name: '{{
+      hostvars[node_name]["jenkins_node_ip"]
+      | default(
+        hostvars[node_name]["ansible_default_ipv4"]["address"]
+      )
+      }}'
+    key: "{{ public_key.stdout }}"
+  with_items:
+    - "{{ jenkins_home }}"
+    - /var/lib/jenkins
+  become: true
