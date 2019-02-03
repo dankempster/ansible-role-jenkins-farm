@@ -7,9 +7,6 @@
     - vars/main.yml
 
   roles:
-    - role: geerlingguy.git
-      become: true
-
     - role: dankempter.jenkins-config
 
     - role: ../../../
