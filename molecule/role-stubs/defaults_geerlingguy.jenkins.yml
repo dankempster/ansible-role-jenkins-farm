@@ -1,10 +1,10 @@
 ---
 # Variables defined in geerlingguy.jenkins and used by dankempster.jenkins-farm
-# 
+#
 # They're defined here as the geerlingguy.jenkins role isn't used in during
 # the molecule tests. For speed, the molecule tests use docker images with
 # Jenkins pre-installed.
-# 
+#
 jenkins_home: /var/lib/jenkins
 jenkins_hostname: localhost
 jenkins_http_port: 8080
