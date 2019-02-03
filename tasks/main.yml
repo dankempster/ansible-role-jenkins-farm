@@ -10,7 +10,7 @@
 
 - name: Add Jenkins slave nodes
   include_tasks: add-slave.yml
-  with_items: "{{ groups['jenkins'] }}"
+  with_items: "{{ groups['jenkins_farm'] }}"
   loop_control:
     loop_var: node_name
   when: hostvars[node_name]['jenkins_farm_role'] == 'slave'

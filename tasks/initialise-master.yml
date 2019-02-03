@@ -88,7 +88,7 @@
 
 - name: Add each slave as a known_host to master
   include_tasks: known-host.yml
-  with_items: "{{ groups['jenkins'] }}"
+  with_items: "{{ groups['jenkins_farm'] }}"
   loop_control:
     loop_var: node_name
   when: hostvars[node_name]['jenkins_farm_role'] == 'slave'
