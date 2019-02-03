@@ -7,13 +7,11 @@
 - name: Ensure master's .ssh folders
   file:
     state: directory
-    path: "{{ item }}/.ssh"
+    path: "{{ jenkins_home }}/.ssh"
     mode: 0700
     owner: "{{ jenkins_user }}"
     group: "{{ jenkins_group | default(jenkins_user, true) }}"
   become: true
-  with_items:
-    - "{{ jenkins_home }}"
 
 - name: Ensure master's key pair
   command: 'ssh-keygen
