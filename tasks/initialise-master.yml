@@ -111,10 +111,6 @@
     force_basic_auth: true
     return_content: true
   register: jenkins_crumb
-  when: |
-    (jenkins_github_enabled and jenkins_github_token != "")
-    or jenkins_credentials_ssh_private_keys | count > 0
-    or jenkins_credentials_secret_text | count > 0
 
 - name: Add Jenkins SSH Key to credentials store
   vars:
