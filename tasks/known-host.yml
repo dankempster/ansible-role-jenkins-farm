@@ -11,7 +11,7 @@
 
 - name: Set {{ node_name }} as a known host
   known_hosts:
-    path: "{{ item }}/.ssh/known_hosts"
+    path: "{{ jenkins_home }}/.ssh/known_hosts"
     name: '{{
       hostvars[node_name]["jenkins_node_ip"]
       | default(
@@ -19,7 +19,4 @@
       )
       }}'
     key: "{{ public_key.stdout }}"
-  with_items:
-    - "{{ jenkins_home }}"
-    - /var/lib/jenkins
   become: true
