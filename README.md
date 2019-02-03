@@ -33,6 +33,14 @@ _Note: `jenkins_hostname` was originally defined in [geerlingguy.jenkins](https:
 
 
 ```yaml
+# passphrase set for Jenkins' SSH private key
+jenkins_farm_ssh_passphrase: "secret"
+```
+
+The passphrase used when generating Jenkins' SSH key pair, which will be used for connecting to the slave nodes.
+
+
+```yaml
 # SSH user for Jenkins to use when connecting to the slaves
 jenkins_farm_ssh_user: "{{ jenkins_process_user }}"
 jenkins_farm_ssh_group: "{{ jenkins_process_group }}"

@@ -15,6 +15,9 @@ jenkins_farm_ssh_user: "{{ jenkins_process_user }}"
 jenkins_farm_ssh_password: "{{ jenkins_admin_pass }}"
 jenkins_farm_ssh_group: "{{ jenkins_process_group }}"
 jenkins_farm_home: "/home/{{ jenkins_farm_ssh_user }}"
+  
+# passphrase set for Jenkins' SSH private key
+jenkins_farm_ssh_passphrase: "secret"
 
 # password for your use when SSHing as Jenkins' user
 #   should be in crypto format, this example crypto text is 'secret'

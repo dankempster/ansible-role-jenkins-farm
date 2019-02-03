@@ -19,7 +19,7 @@
     -t rsa
     -q
     -f {{ jenkins_home }}/.ssh/id_rsa
-    -N "{{ jenkins_ssh_passphrase }}"'
+    -N "{{ jenkins_farm_ssh_passphrase }}"'
   args:
     creates: "{{ jenkins_home }}/.ssh/id_rsa"
   become: true
