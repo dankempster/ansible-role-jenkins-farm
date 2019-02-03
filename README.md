@@ -44,10 +44,10 @@ The passphrase used when generating Jenkins' SSH key pair, which will be used fo
 # SSH user for Jenkins to use when connecting to the slaves
 jenkins_farm_ssh_user: "{{ jenkins_process_user }}"
 jenkins_farm_ssh_group: "{{ jenkins_process_group }}"
-jenkins_farm_home: "/home/{{ jenkins_farm_ssh_user }}"
+jenkins_farm_ssh_home: "/home/{{ jenkins_farm_ssh_user }}"
 ```
 
-The user, group and home directory to create on each slave.
+The user, password, group and home directory to create on each slave.
 Defaults to the same user and group as on the master, defined by `jenkins_process_user` & `jenkins_process_group` from [geerlingguy.jenkins](https://github/geerlingguy/ansible-role-jenkins) role.
 
 

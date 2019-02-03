@@ -27,10 +27,7 @@
         hostvars[node_name]["jenkins_node_executors"]
         | default(1)
         }}'
-      remote_fs: '{{
-        hostvars[node_name]["jenkins_node_remote_fs"]
-        | default("/home/" ~ jenkins_user)
-        }}'
+      remote_fs: '{{ hostvars[node_name]["jenkins_farm_ssh_home"] }}'
       labels: '{{
         hostvars[node_name]["jenkins_node_labels"]
         | default( [] )
