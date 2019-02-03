@@ -7,5 +7,6 @@
 
   roles:
     - role: dankempter.jenkins-config
+      when: jenkins_farm_role == 'master'
 
     - role: ../../../
