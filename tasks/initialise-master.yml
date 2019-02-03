@@ -9,8 +9,8 @@
     state: directory
     path: "{{ jenkins_home }}/.ssh"
     mode: 0700
-    owner: "{{ jenkins_user }}"
-    group: "{{ jenkins_group | default(jenkins_user, true) }}"
+    owner: "{{ jenkins_process_user }}"
+    group: "{{ jenkins_process_group }}"
   become: true
 
 - name: Ensure master's key pair
@@ -48,16 +48,16 @@
   with_items:
     - path: "{{ jenkins_home }}/.ssh/"
       mode: "0700"
-      owner: "{{ jenkins_user }}"
-      group: "{{ jenkins_group }}"
+      owner: "{{ jenkins_process_user }}"
+      group: "{{ jenkins_process_group }}"
     - path: "{{ jenkins_home }}/.ssh/id_rsa"
       mode: "0600"
-      owner: "{{ jenkins_user }}"
-      group: "{{ jenkins_group }}"
+      owner: "{{ jenkins_process_user }}"
+      group: "{{ jenkins_process_group }}"
     - path: "{{ jenkins_home }}/.ssh/id_rsa.pub"
       mode: "0644"
-      owner: "{{ jenkins_user }}"
-      group: "{{ jenkins_group }}"
+      owner: "{{ jenkins_process_user }}"
+      group: "{{ jenkins_process_group }}"
   become: true
 
 - name: Configure CLI SSH to use Jenkins' key for each node.
@@ -70,7 +70,7 @@
   become: true
   with_items:
     - path: "{{ jenkins_home }}"
-      owner: "{{ jenkins_user }}"
+      owner: "{{ jenkins_process_user }}"
 
 
 #
@@ -81,8 +81,8 @@
   file:
     state: touch
     path: "{{ jenkins_home }}/.ssh/known_hosts"
-    owner: "{{ jenkins_user }}"
-    group: "{{ jenkins_group }}"
+    owner: "{{ jenkins_process_user }}"
+    group: "{{ jenkins_process_group }}"
     mode: 0640
   become: true
 
