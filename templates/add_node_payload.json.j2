@@ -31,11 +31,11 @@
     "hudson-slaves-EnvironmentVariablesNodeProperty":{
       "env":[  
       {% set env_count = node.env_vars | count %}
-      {% set loop = 0 %}
+      {% set iter = 0 %}
       {% for variable in node.env_vars %}
-        {% set loop = loop + 1 %}
+        {% set iter = iter + 1 %}
         { "key":"ENV_VAR",
-          "value":"VALUE" }{% if loop < count %},{% endif %}
+          "value":"VALUE" }{% if iter < count %},{% endif %}
       {% endfor %}
     }
     {% endif %}
