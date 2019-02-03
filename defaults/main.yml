@@ -6,9 +6,8 @@ jenkins_farm_master: ""
 jenkins_hostname: "{{ jenkins_farm_master }}"
 
 # the role of the current node (worked out automatically)
-jenkins_farm_role: "{{
-  (inventory_hostname == jenkins_farm_master) | ternary('master', 'slave')
-  }}"
+
+jenkins_farm_role: ""
 
 # SSH user for Jenkins to use when connecting to the slaves
 jenkins_farm_ssh_user: "{{ jenkins_process_user }}"

@@ -63,14 +63,15 @@ The SSH password set for the jenkins user on each slave. This is not used by the
 
 
 ```yaml
-# the role of the current node (worked out automatically)
-jenkins_farm_role: "{{
-  (inventory_hostname == jenkins_farm_master) | ternary('master', 'slave')
-  }}"
+# The role of the current node, either 'master' or 'slave'
+#   Their can only be one 'master' per farm
+jenkins_farm_role: ""
 ```
 
-The role of each node, can be either `master` or `node`. There should only be one `master` per farm. 
-This is calculated automatically based on `jenkins_farm_master`. Generally, you shouldn't need to change it.
+The role of each node, can be either `master` or `slave`. There should only be one `master` per farm.
+
+`jenkins_farm_role` _must_ be set on each node as a host_var or group_var.
+
 
 
 ## Example Playbook
@@ -95,6 +96,20 @@ Following is a simple playbook that, depending on inventory, can be used in seve
     - role: roles/dankempster.jenkins-farm
 
 ```
+
+A minimal playbooks to use this role.
+
+
+```yaml
+# group_vars/jenkins_farm.yml
+
+# define the role of each node automatically
+jenkins_farm_role: "{{
+  (inventory_hostname == jenkins_farm_master) | ternary('master', 'slave')
+  }}"
+``` 
+
+Use this group_var to define the `jenkins_farm_role` variable for each node automatically.
 
 
 ### A single farm
