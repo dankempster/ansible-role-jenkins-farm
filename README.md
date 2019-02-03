@@ -106,7 +106,7 @@ Following is an example `inventory` file for setting up a simple Jenkins build f
 
 jenkins_farm:
   hosts:
-  	jenkins_master.example.com:
+    jenkins_master.example.com:
     jenkins_slave1.example.com:
     jenkins_slave2.example.com:
   vars:
@@ -189,7 +189,7 @@ It's easy to configure multiple farms simultaneously by grouping the nodes of ea
 # the development farm
 dev_farm:
   hosts:
-  	master.dev.farm.example.com:
+    master.dev.farm.example.com:
     slave1.dev.farm.example.com:
     slave2.dev.farm.example.com:
   vars:
@@ -198,7 +198,7 @@ dev_farm:
 # the QA build farm
 qa_farm:
   hosts:
-  	master.qa.farm.example.com:
+    master.qa.farm.example.com:
     slave1.qa.farm.example.com:
     slave2.qa.farm.example.com:
   vars:
