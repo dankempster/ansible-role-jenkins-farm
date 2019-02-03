@@ -44,6 +44,16 @@ Defaults to the same user and group as on the master, defined by `jenkins_proces
 
 
 ```yaml
+# password for your use when SSHing as Jenkins' user
+#   should be in crypto format, this example crypto text is 'secret'
+jenkins_farm_ssh_password: "$6$xJ5H4uQhfxcL3nY7$Tam0bIhAigVy8/6V88ppCGuGSJB83GW\
+  ce/zTAHnmDvMvVgb3MKrrChW0LhrtciaraQuYJGZSbHoRzb.qbAP7.."
+```
+
+The SSH password set for the jenkins user on each slave. This is not used by the role itself, it's simply to allow you to log in.
+
+
+```yaml
 # the role of the current node (worked out automatically)
 jenkins_farm_role: "{{
   (inventory_hostname == jenkins_farm_master) | ternary('master', 'slave')

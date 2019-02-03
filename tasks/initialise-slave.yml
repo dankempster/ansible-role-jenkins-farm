@@ -4,9 +4,11 @@
   user:
     name: "{{ jenkins_user }}"
     password: "{{
-      jenkins_user_password
-      | default(jenkins_admin_password, true)
-      }}"
+      jenkins_farm_ssh_password
+      | default(
+        '$6$xJ5H4uQhfxcL3nY7$Tam0bIhAigVy8/6V88ppCGuGSJB83GWce/zTAHnmDvMvVgb3MKrrChW0LhrtciaraQuYJGZSbHoRzb.qbAP7..',
+        true
+      ) }}"
     home: "/home/{{ jenkins_user }}"
     shell: /bin/bash
   become: true
