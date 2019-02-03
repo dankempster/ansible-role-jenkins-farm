@@ -8,7 +8,7 @@
 
 - name: Prepare 'Register {{ node_name }} node' payload
   template:
-    src: "{{ playbook_dir }}/templates/add_node_payload.json.j2"
+    src: "templates/add_node_payload.json.j2"
     dest: "{{ playbook_dir }}/rest-payloads/add-node_{{ node_name }}.json"
   vars:
     node:
