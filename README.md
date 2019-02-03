@@ -14,6 +14,7 @@ This role doesn't actually install Jenkins. It's designed to work with these rol
 
 Available variables are listed below, along with default values (see `defaults/main.yml`):
 
+
 ```yaml
 # inventory name of the master node for the farm
 jenkins_farm_master: ""
@@ -76,8 +77,6 @@ This is calculated automatically based on `jenkins_farm_master`. Generally, you 
 
 Following is a simple playbook that, depending on inventory, can be used in several ways.
 
-First, you'll need this simple playbook:
-
 ```yaml
 # playbook.yml
 
@@ -91,6 +90,9 @@ First, you'll need this simple playbook:
       when: jenkins_farm_role == 'master'
 
     - role: roles/dankempster.jenkins-config
+      when: jenkins_farm_role == 'master'
+
+    - role: roles/dankempster.jenkins-farm
 
 ```
 
