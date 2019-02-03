@@ -6,20 +6,29 @@
   "labelString":"{{ node.labels | join(' ') }}",
   "mode":"{{ node.mode }}",
   "":[  
-    "hudson.slaves.JNLPLauncher",
+    "hudson.plugins.sshslaves.SSHLauncher",
     "hudson.slaves.RetentionStrategy$Always"
   ],
-  "launcher":{  
-    "stapler-class":"hudson.slaves.JNLPLauncher",
-    "$class":"hudson.slaves.JNLPLauncher",
-    "workDirSettings":{  
-      "disabled":false,
-      "workDirPath":"{{ node.workdir }}",
-      "internalDir":"{{ node.internal_dir }}",
-      "failIfWorkDirIsMissing":{{ node.fail_on_no_workdir | ternary('true', 'false') }}
+  "launcher": {
+    "stapler-class": "hudson.plugins.sshslaves.SSHLauncher",
+    "$class": "hudson.plugins.sshslaves.SSHLauncher",
+    "host": "{{ node.hostname }}",
+    "credentialsId": "jenkins.ssh",
+    "": "0",
+    "sshHostKeyVerificationStrategy": {
+      "stapler-class": "hudson.plugins.sshslaves.verifiers.KnownHostsFileKeyVerificationStrategy",
+      "$class": "hudson.plugins.sshslaves.verifiers.KnownHostsFileKeyVerificationStrategy"
     },
-    "tunnel":"{{ node.tunnel_through }}",
-    "vmargs":"{{ node.jvm_args }}"
+    "port": "22",
+    "javaPath": "",
+    "jvmOptions": "",
+    "prefixStartSlaveCmd": "",
+    "suffixStartSlaveCmd": "",
+    "launchTimeoutSeconds": "",
+    "maxNumRetries": "",
+    "retryWaitTime": "",
+    "tcpNoDelay": true,
+    "workDir": ""
   },
   "retentionStrategy":{  
     "stapler-class":"hudson.slaves.RetentionStrategy$Always",
