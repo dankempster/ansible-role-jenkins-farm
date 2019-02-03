@@ -1,5 +1,9 @@
 ---
 
+- name: Install SSH-Slaves plugin
+  import_tasks: install-plugins.yml
+  when: jenkins_farm_role == 'master'
+
 - name: Initialise the Master node
   import_tasks: initialise-master.yml
   when: jenkins_farm_role == 'master'
