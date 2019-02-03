@@ -3,7 +3,6 @@
   hosts: all
   become: true
   vars_files:
-    # - ../../defaults/main.yml
     - ../role-stubs/defaults_geerlingguy.jenkins.yml
 
   roles:
