@@ -8,17 +8,46 @@ lint:
   options:
     config-file: yaml-lint.yml
 platforms:
-  - name: "${MOLECULE_DISTRO:-debian9}"
+  - name: "jenkins_master_${MOLECULE_DISTRO:-debian9}"
     image: "${MOLECULE_IMAGE:-dankempster/jenkins-ansible:latest}"
-    command: ${MOLECULE_DOCKER_COMMAND:-""}
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
     privileged: true
     pre_build_image: true
+    groups:
+      - jenkins_master
+      - jenkins_farm
+  - name: "jenkins_slave_${MOLECULE_DISTRO:-debian9}"
+    image: "${MOLECULE_IMAGE:-geerlingguy/docker-debian9-ansible:latest}"
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: false
+    pre_build_image: true
+    groups:
+      - jenkins_slaves
+      - jenkins_farm
 provisioner:
   name: ansible
   lint:
     name: ansible-lint
+  inventory:
+    group_vars:
+      jenkins_master:
+        jenkins_hostname: "jenkins_master_${MOLECULE_DISTRO:-debian9}"
+        jenkins_http_port: 8080
+        jenkins_plugins: []
+        jenkins_admin_user: admin
+        jenkins_admin_pass: admin
+        jenkins_config_executors: 0
+      jenkins_slaves:
+        jenkins_config_executors: 1
+      jenkins_farm:
+        jenkins_farm_master: "jenkins_master_${MOLECULE_DISTRO:-debian9}"
+        jenkins_farm_ssh_password: "$$6$$xJ5H4uQhfxcL3nY7$$Tam0bIhAigVy8/6V88p\
+          pCGuGSJB83GWce/zTAHnmDvMvVgb3MKrrChW0LhrtciaraQuYJGZSbHoRzb.qbAP7.."
+        jenkins_farm_role: "{{
+          (inventory_hostname == jenkins_farm_master) | ternary('master', 'slave')
+          }}"
 scenario:
   name: default
   test_sequence:

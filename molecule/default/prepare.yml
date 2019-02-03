@@ -1,0 +1,25 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  vars_files:
+    - ../role-stubs/defaults_geerlingguy.jenkins.yml
+
+  tasks:
+    - name: Install ssh-keygen
+      apt:
+        package:
+          - ssh
+
+    - name: Set up SSH server
+      apt:
+        package:
+          - openssh-server
+          - openssh-client
+      when: "jenkins_farm_role == 'slave'"
+
+    - name: Start SSH server
+      service:
+        name: ssh
+        state: started
+      when: "jenkins_farm_role == 'slave'"
