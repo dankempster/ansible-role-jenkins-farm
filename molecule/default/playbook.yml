@@ -5,7 +5,6 @@
   vars_files:
     # - ../../defaults/main.yml
     - ../role-stubs/defaults_geerlingguy.jenkins.yml
-    - vars/main.yml
 
   roles:
     - role: dankempter.jenkins-config

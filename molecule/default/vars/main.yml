@@ -1,6 +1,0 @@
----
-jenkins_config_plugins: []
-
-jenkins_git_config_name: Dan Kempster
-jenkins_git_config_email: me@dankempster.co.uk
-jenkins_git_installations: []
