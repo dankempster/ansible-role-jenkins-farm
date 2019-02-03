@@ -9,7 +9,7 @@
         '$6$xJ5H4uQhfxcL3nY7$Tam0bIhAigVy8/6V88ppCGuGSJB83GWce/zTAHnmDvMvVgb3MKrrChW0LhrtciaraQuYJGZSbHoRzb.qbAP7..',
         true
       ) }}"
-    home: "{{ jenkins_farm_ssh_home }}"
+    home: "{{ jenkins_farm_home }}"
     shell: /bin/bash
   become: true
 
@@ -22,7 +22,7 @@
 
 - name: Ensure slave .ssh permissions and mode
   file:
-    path: "{{ jenkins_farm_ssh_home }}/{{ item.name }}"
+    path: "{{ jenkins_farm_home }}/{{ item.name }}"
     mode: "{{ item.mode }}"
     owner: "{{ jenkins_farm_ssh_user }}"
     group: "{{ jenkins_farm_ssh_group }}"
