@@ -1,4 +1,4 @@
 ---
 - src: https://github.com/dankempster/ansible-role-jenkins-config
-  version: feature/remove-farm
+  version: develop
   name: dankempter.jenkins-config
