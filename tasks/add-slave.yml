@@ -5,6 +5,7 @@
     state: directory
     path: "{{ playbook_dir }}/rest-payloads"
   delegate_to: localhost
+  become: false
 
 - name: Prepare 'Register {{ node_name }} node' payload
   template:
@@ -68,12 +69,14 @@
         | default([])
         }}'
   delegate_to: localhost
+  become: false
 
 - name: Retrieve 'Register {{ node_name }} node' payload
   command: "cat {{ playbook_dir }}/rest-payloads/add-node_{{ node_name }}.json"
   register: payload
   changed_when: false
   delegate_to: localhost
+  become: false
 
 - name: Get Jenkins crumb
   uri:
