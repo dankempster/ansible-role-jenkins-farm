@@ -10,12 +10,14 @@
       apt:
         package:
           - ssh
+        update_cache: true
 
     - name: Set up SSH server
       apt:
         package:
           - openssh-server
           - openssh-client
+        update_cache: true
       when: "jenkins_farm_role == 'slave'"
 
     - name: Start SSH server
