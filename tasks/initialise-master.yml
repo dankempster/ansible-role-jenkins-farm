@@ -2,6 +2,26 @@
 
 #
 #
+### PLUGINS
+#
+- name: Install SSH-Slaves plugin
+  become: true
+  jenkins_plugin:
+    name: ssh-slaves
+    jenkins_home: "{{ jenkins_home }}"
+    url_username: "{{ jenkins_admin_username }}"
+    url_password: "{{ jenkins_admin_password }}"
+    state: "{{ jenkins_plugins_state }}"
+    timeout: "{{ jenkins_plugin_timeout }}"
+    updates_expiration: "{{ jenkins_plugin_updates_expiration }}"
+    url: "{{ jenkins_uri }}"
+    with_dependencies: "{{ jenkins_plugins_install_dependencies }}"
+  when: jenkins_admin_password != ""
+  notify: restart jenkins
+
+
+#
+#
 ### SSH KEY
 #
 - name: Ensure master's .ssh folders
