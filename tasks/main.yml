@@ -5,11 +5,11 @@
   when: jenkins_farm_role == 'master'
 
 - name: Initialise the Master node
-  import_tasks: initialise-master.yml
+  include_tasks: initialise-master.yml
   when: jenkins_farm_role == 'master'
 
 - name: Initialise the Slave nodes
-  import_tasks: initialise-slave.yml
+  include_tasks: initialise-slave.yml
   when: jenkins_farm_role == 'slave'
 
 - name: Add Jenkins slave nodes
