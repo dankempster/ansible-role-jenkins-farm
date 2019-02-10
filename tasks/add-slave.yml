@@ -31,7 +31,7 @@
         hostvars[node_name]["jenkins_node_executors"]
         | default(1)
         }}'
-      remote_fs: '{{ hostvars[node_name]["jenkins_farm_home"] }}'
+      remote_fs: '{{ hostvars[node_name]["jenkins_farm_home"] | default(jenkins_farm_home) }}'
       labels: '{{
         hostvars[node_name]["jenkins_node_labels"]
         | default( [] )
